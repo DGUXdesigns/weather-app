@@ -1,0 +1,57 @@
+*,
+::after,
+::before {
+	box-sizing: border-box;
+	padding: 0;
+	margin: 0;
+	color: var(--txt-color);
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+:root {
+	--primary: rgb(18, 18, 18);
+	--secondary: rgb(30, 30, 30);
+	--txt-clr-scd: rgba(224, 224, 224, 0.7);
+	--txt-color: rgb(224, 224, 224);
+}
+
+body {
+	display: flex;
+	background-color: var(--primary);
+	height: 100vh;
+}
+
+aside {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+	padding: 1.5rem;
+	min-width: 350px;
+	background-color: var(--secondary);
+}
+
+.logo {
+	font-size: 1.5rem;
+}
+
+.logo-span {
+	color: #4fc3f7;
+}
+
+/* form styling */
+form {
+	display: flex;
+	align-items: center;
+}
+
+input {
+	width: 100%;
+	padding: 0.75rem;
+	background: none;
+	border: none;
+	border-bottom: 1px solid var(--txt-clr-scd);
+}
+
+input:focus {
+	outline: none;
+}
