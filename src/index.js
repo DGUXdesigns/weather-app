@@ -1,27 +1,50 @@
 import './style.css';
 import { format, addDays } from 'date-fns';
 
-const API_KEY = '4SLZTCLFVD8DARFJJXAYQHB48';
-let location = 'Toronto';
+// Initialize components
+const form = document.querySelector('form');
+const search = document.getElementById('search');
 
+// Initialize components
+const API_KEY = '4SLZTCLFVD8DARFJJXAYQHB48';
+let unitSystem = 'metric';
+
+// Calculating dates for weather data
 const currentDate = new Date();
 const futureDate = addDays(currentDate, 7);
 
 const startDate = format(currentDate, 'yyyy-MM-dd');
 const endDate = format(futureDate, 'yyyy-MM-dd');
 
-async function getWeatherData() {
-  try {
-    const response = await fetch(
-      `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}/${startDate}/${endDate}?key=${API_KEY}`,
-      { mode: 'cors' },
-    );
-    const data = await response.json();
+// Event Listeners
+search.addEventListener('keypress', (event) => {
+	if (event.key === 'Enter') {
+		event.preventDefault();
+		form.dispatchEvent(new Event('submit'));
+		search.value = '';
+	}
+});
 
-    console.table(data);
-  } catch (err) {
-    console.log(err);
-  }
-}
+form.addEventListener('submit', (event) => {
+	event.preventDefault();
+	let location = search.value.trim();
 
-getWeatherData();
+	console.log(`Searching for weather in ${search.value.trim()}`);
+
+	// Collect weather data from API
+	async function getWeatherData() {
+		try {
+			const response = await fetch(
+				`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}/${startDate}/${endDate}?unitGroup=${unitSystem}&key=${API_KEY}`,
+				{ mode: 'cors' },
+			);
+			const data = await response.json();
+
+			console.log(data);
+		} catch (err) {
+			console.log(err);
+		}
+	}
+
+	getWeatherData();
+});
