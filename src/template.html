@@ -3,7 +3,11 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Document</title>
+		<link
+			href="https://fonts.googleapis.com/icon?family=Material+Icons"
+			rel="stylesheet"
+		/>
+		<title>RainCheck</title>
 	</head>
 	<body>
 		<aside>
@@ -19,6 +23,40 @@
 					placeholder="Search for a City (Toronto, ON)"
 				/>
 			</form>
+
+			<div class="wrapper">
+				<h2 class="address">Toronto, ON, Canada</h2>
+			</div>
+
+			<div class="wrapper status">
+				<i class="material-icons icon">cloudy_snowing</i>
+			</div>
+
+			<div class="wrapper degree">
+				<h2 class="temp">-4&deg;C</h2>
+
+				<hr />
+
+				<div class="weather-info">
+					<div class="info-container">
+						<span class="material-icons icon">cloud</span>
+						<p class="condition">Partially Cloudy</p>
+					</div>
+
+					<div class="info-container">
+						<span class="material-icons icon">ac_unit</span>
+						<p class="precipation">Snow 36%</p>
+					</div>
+				</div>
+			</div>
+
+			<div class="address-wrapper">
+				<div class="time">
+					<i class="material-icons icon">nights_stay</i>
+					<h2 class="timestamp">12:13 PM</h2>
+				</div>
+				<p class="date">Tuesday, January 7th, 2025</p>
+			</div>
 		</aside>
 		<main></main>
 	</body>
