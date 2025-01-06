@@ -1,3 +1,5 @@
+import { format } from 'date-fns';
+
 export class DisplaySidebar {
 	constructor(container, data) {
 		this.container = document.querySelector(container);
@@ -8,10 +10,12 @@ export class DisplaySidebar {
 		this.container.innerHTML = '';
 
 		const address = this.createAddress();
-		const weatherIcon = this.createWeatherIcon();
+		const currentConditions = this.createCurrentConditions();
+		const timeStamp = this.createTimeAndDate();
 
 		this.container.appendChild(address);
-		this.container.appendChild(weatherIcon);
+		this.container.appendChild(currentConditions);
+		this.container.appendChild(timeStamp);
 	}
 
 	createAddress() {
@@ -22,6 +26,30 @@ export class DisplaySidebar {
 		addressWrapper.appendChild(address);
 
 		return addressWrapper;
+	}
+
+	createCurrentConditions() {
+		const currentConditionsWrapper = createElement('div', 'info-wrapper');
+		const currentTemp = this.createTemp();
+		const lineBreak = createElement('hr', 'linebreak');
+		const weatherInfo = this.createWeatherInfo();
+
+		currentConditionsWrapper.appendChild(currentTemp);
+		currentConditionsWrapper.appendChild(lineBreak);
+		currentConditionsWrapper.appendChild(weatherInfo);
+
+		return currentConditionsWrapper;
+	}
+
+	createTemp() {
+		const container = createElement('div', 'temperature');
+		const icon = this.createWeatherIcon();
+		const temp = createElement('h2', 'temp');
+		temp.innerText = `${this.data.currentConditions.temp}°C`;
+
+		container.append(icon, temp);
+
+		return container;
 	}
 
 	createWeatherIcon() {
@@ -46,14 +74,112 @@ export class DisplaySidebar {
 
 		// Default fallback icon
 		const iconClass = iconMap[this.data.currentConditions.icon] || 'wi-na';
-
-		const iconWrapper = createElement('div', 'wrapper');
 		const icon = document.createElement('i');
 		icon.classList.add('wi', iconClass);
 
-		iconWrapper.appendChild(icon);
+		return icon;
+	}
 
-		return iconWrapper;
+	createWeatherInfo() {
+		const container = createElement('div', 'weather-info');
+
+		// Display current condition
+		const conditionsDiv = createElement('div', 'info-container');
+		const conditionsIcon = this.createWeatherIcon();
+		const conditionText = createElement('p', 'condition');
+		conditionText.innerText = this.data.currentConditions.conditions;
+
+		conditionsDiv.append(conditionsIcon, conditionText);
+
+		// Precipitation
+		const precipitationDiv = createElement('div', 'info-container');
+		const iconMap = {
+			snow: 'wi-snow',
+			rain: 'wi-rain',
+			'freezing rain': 'wi-rain-mix',
+			ice: 'wi-sleet',
+			hail: 'wi-hail',
+			mixed: 'wi-rain-mix',
+		};
+
+		// Fall back incase precitype = null
+		const iconClass =
+			iconMap[this.data.currentConditions.precitype] || 'wi-rain';
+
+		const preciIcon = document.createElement('i');
+		preciIcon.classList.add('wi', iconClass);
+
+		const precipitation = createElement('p', 'precipitation');
+		precipitation.innerText = `${this.data.currentConditions.precitype || ''} ${this.data.currentConditions.preciprob || '0'}%`;
+
+		precipitationDiv.append(preciIcon, precipitation);
+
+		// Feels like info
+		const feelsLikeDiv = createElement('div', 'info-container');
+		const feelsIcon = createElement('i', 'material-icons');
+		this.data.currentConditions.feelslike < 0
+			? (feelsIcon.innerText = 'ac_unit')
+			: (feelsIcon.innerText = 'wb_sunny');
+		const feelsLike = createElement('p', 'feels');
+		feelsLike.innerText = `Feels like ${this.data.currentConditions.feelslike}°C`;
+
+		feelsLikeDiv.append(feelsIcon, feelsLike);
+
+		container.appendChild(conditionsDiv);
+		container.appendChild(precipitationDiv);
+		container.appendChild(feelsLikeDiv);
+
+		return container;
+	}
+
+	createTimeAndDate() {
+		const container = createElement('div', 'time-stamp');
+
+		const timeDiv = createElement('div', 'time');
+		const icon = this.createDayNightIcon();
+
+		const timeValue = this.data.currentConditions.datetime;
+
+		const todayDate = format(new Date(), 'yyyy-MM-dd'); // E.g., "2025-01-05"
+		const fullDateTimeString = `${todayDate}T${timeValue}`; // E.g., "2025-01-05T21:51:00"
+		const localDateTime = new Date(fullDateTimeString);
+
+		const time = createElement('p', 'current-time');
+		time.innerText = format(localDateTime, 'hh:mm a');
+
+		const date = createElement('p', 'date');
+		date.innerText = format(localDateTime, 'EEEE, MMMM do, yyyy');
+
+		timeDiv.append(icon, time);
+		container.appendChild(timeDiv);
+		container.appendChild(date);
+
+		return container;
+	}
+
+	createDayNightIcon() {
+		const iconMap = {
+			day: 'wb_sunny',
+			night: 'nights_stay',
+		};
+
+		// Get the current time and sunset time
+		const currentTime = new Date();
+		const sunsetTime = new Date(
+			`${this.data.currentConditions.sunset} ${this.data.timezone}`,
+		);
+
+		// Determine if it's day or night
+		const timeOfDay = currentTime < sunsetTime ? 'day' : 'night';
+
+		// Choose the icon based on time of day
+		const iconClass = iconMap[timeOfDay];
+
+		const icon = document.createElement('i');
+		icon.classList.add('material-icons');
+		icon.innerText = iconClass;
+
+		return icon;
 	}
 }
 
