@@ -43,41 +43,13 @@ export class DisplaySidebar {
 
 	createTemp() {
 		const container = createElement('div', 'temperature');
-		const icon = this.createWeatherIcon();
+		const icon = createWeatherIcon(this.data.currentConditions.icon);
 		const temp = createElement('h2', 'temp');
-		temp.innerText = `${this.data.currentConditions.temp}°C`;
+		temp.innerText = `${Math.round(this.data.currentConditions.temp)}°C`;
 
 		container.append(icon, temp);
 
 		return container;
-	}
-
-	createWeatherIcon() {
-		const iconMap = {
-			snow: 'wi-snow',
-			'snow-showers-day': 'wi-day-snow',
-			'snow-showers-night': 'wi-night-alt-snow',
-			'thunder-rain': 'wi-thunderstorm',
-			'thunder-showers-day': 'wi-day-thunderstorm',
-			'thunder-showers-night': 'wi-night-alt-thunderstorm',
-			rain: 'wi-rain',
-			'showers-day': 'wi-day-rain',
-			'showers-night': 'wi-night-alt-rain',
-			fog: 'wi-fog',
-			wind: 'wi-windy',
-			cloudy: 'wi-cloudy',
-			'partly-cloudy-day': 'wi-day-cloudy',
-			'partly-cloudy-night': 'wi-night-cloudy',
-			'clear-day': 'wi-day-sunny',
-			'clear-night': 'wi-night-clear',
-		};
-
-		// Default fallback icon
-		const iconClass = iconMap[this.data.currentConditions.icon] || 'wi-na';
-		const icon = document.createElement('i');
-		icon.classList.add('wi', iconClass);
-
-		return icon;
 	}
 
 	createWeatherInfo() {
@@ -85,7 +57,9 @@ export class DisplaySidebar {
 
 		// Display current condition
 		const conditionsDiv = createElement('div', 'info-container');
-		const conditionsIcon = this.createWeatherIcon();
+		const conditionsIcon = createWeatherIcon(
+			this.data.currentConditions.icon,
+		);
 		const conditionText = createElement('p', 'condition');
 		conditionText.innerText = this.data.currentConditions.conditions;
 
@@ -121,7 +95,7 @@ export class DisplaySidebar {
 			? (feelsIcon.innerText = 'ac_unit')
 			: (feelsIcon.innerText = 'wb_sunny');
 		const feelsLike = createElement('p', 'feels');
-		feelsLike.innerText = `Feels like ${this.data.currentConditions.feelslike}°C`;
+		feelsLike.innerText = `Feels like ${Math.round(this.data.currentConditions.feelslike)}°C`;
 
 		feelsLikeDiv.append(feelsIcon, feelsLike);
 
@@ -184,9 +158,37 @@ export class DisplaySidebar {
 }
 
 // Helper functions
-function createElement(element, className) {
+export function createElement(element, className) {
 	const el = document.createElement(element);
 	el.classList.add(className);
 
 	return el;
+}
+
+export function createWeatherIcon(iconData) {
+	const iconMap = {
+		snow: 'wi-snow',
+		'snow-showers-day': 'wi-day-snow',
+		'snow-showers-night': 'wi-night-alt-snow',
+		'thunder-rain': 'wi-thunderstorm',
+		'thunder-showers-day': 'wi-day-thunderstorm',
+		'thunder-showers-night': 'wi-night-alt-thunderstorm',
+		rain: 'wi-rain',
+		'showers-day': 'wi-day-rain',
+		'showers-night': 'wi-night-alt-rain',
+		fog: 'wi-fog',
+		wind: 'wi-windy',
+		cloudy: 'wi-cloudy',
+		'partly-cloudy-day': 'wi-day-cloudy',
+		'partly-cloudy-night': 'wi-night-cloudy',
+		'clear-day': 'wi-day-sunny',
+		'clear-night': 'wi-night-clear',
+	};
+
+	// Default fallback icon
+	const iconClass = iconMap[iconData] || 'wi-na';
+	const icon = document.createElement('i');
+	icon.classList.add('wi', iconClass);
+
+	return icon;
 }
