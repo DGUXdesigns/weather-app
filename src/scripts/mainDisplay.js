@@ -1,4 +1,4 @@
-import { createElement } from './sidebarDisplay';
+import { createElement, createWeatherIcon } from './sidebarDisplay';
 import { format } from 'date-fns';
 
 export class DisplayMain {
@@ -8,9 +8,13 @@ export class DisplayMain {
 	}
 
 	renderMain() {
+		this.container.innerHTML = '';
+
 		const highlights = this.createHighlightsSection();
+		const thisWeek = this.createThisWeekSection();
 
 		this.container.appendChild(highlights);
+		this.container.appendChild(thisWeek);
 	}
 
 	createHighlightsSection() {
@@ -30,10 +34,10 @@ export class DisplayMain {
 	createHighlightsGrid() {
 		const grid = createElement('div', 'highlight-grid');
 
-		const windSpeed = `${this.data.currentConditions.windspeed || 0} km/h`;
-		const humidity = `${this.data.currentConditions.humidity || 0}%`;
-		const visibility = `${this.data.currentConditions.visibility || 0} km`;
-		const feelsLike = `${this.data.currentConditions.feelslike || 0}°C`;
+		const windSpeed = `${Math.round(this.data.currentConditions.windspeed) || 0} km/h`;
+		const humidity = `${Math.round(this.data.currentConditions.humidity) || 0}%`;
+		const visibility = `${Math.round(this.data.currentConditions.visibility) || 0} km`;
+		const feelsLike = `${Math.round(this.data.currentConditions.feelslike) || 0}°C`;
 
 		const windSpeedCard = this.createStatCard(windSpeed, 'Wind Speed');
 		const humidityCard = this.createStatCard(humidity, 'humidty');
@@ -67,6 +71,58 @@ export class DisplayMain {
 		);
 
 		return grid;
+	}
+
+	createThisWeekSection() {
+		const container = createElement('div', 'this-week');
+		const header = createElement('h2', 'this-week-heeder');
+		header.innerText = 'This Week';
+
+		const cardContainer = createElement('div', 'card-container');
+
+		const forecast = this.data.days.slice(1, 7);
+
+		forecast.forEach((day) => {
+			const dateTime = day.datetime;
+			const iconData = day.icon;
+			const temperature = `${Math.round(day.temp)}°C`;
+			const feelsLikeTemp = `${Math.round(day.feelslike)}°C`;
+
+			// Create the weekday card
+			const card = this.createWeekDayCard(
+				dateTime,
+				iconData,
+				temperature,
+				feelsLikeTemp,
+			);
+
+			// Append the card to the card container
+			cardContainer.appendChild(card);
+		});
+
+		container.append(header, cardContainer);
+
+		return container;
+	}
+
+	createWeekDayCard(dateTime, iconData, temperature, actualtemp) {
+		const card = createElement('div', 'weekday-card');
+		const date = createElement('p', 'weekday');
+		date.innerText = format(new Date(dateTime), 'EEE');
+
+		const icon = createWeatherIcon(iconData);
+
+		const tempDiv = createElement('div', 'weekday-temp');
+		const temp = createElement('p', 'actual-temp');
+		temp.innerText = temperature;
+		const feelsLike = createElement('p', 'feelsLike-temp');
+		feelsLike.innerText = actualtemp;
+
+		tempDiv.append(temp, feelsLike);
+
+		card.append(date, icon, tempDiv);
+
+		return card;
 	}
 
 	createStatCard(data, statName) {
