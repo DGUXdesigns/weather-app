@@ -54,3 +54,4 @@ To run the app locally:
 - **Location Persistence**: Allow users to save their favorite locations for quick access.
 - **Unit Toggle**: Let users toggle between Celsius and Fahrenheit for temperature readings.
 - **Weather Alerts**: Add notifications for severe weather conditions like storms or extreme temperatures.
+- **Responsiveness**: Allow app to be used on devices of all sizes.
